@@ -3,6 +3,12 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { generateDocument } from "./doc";
+import { ConfigService } from "@nestjs/config";
+import { FormatResponseInterceptor } from "./format-response.interceptor";
+import { InvalidatedProjectKind } from "typescript";
+import { InvokeRecordInterceptor } from "./invoke-record.interceptor";
+import { UnLoginException, UnloginFilter } from "./unlogin.filter";
+import { CustomExceptionFilter } from "./custom-exception.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -10,6 +16,10 @@ async function bootstrap() {
  
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(4396);
+  app.useGlobalInterceptors(new FormatResponseInterceptor());
+  app.useGlobalInterceptors(new InvokeRecordInterceptor());
+  app.useGlobalFilters(new UnloginFilter(),new CustomExceptionFilter())
+  const configService =  app.get(ConfigService)
+  await app.listen(configService.get('nest_server_port'));
 }
 bootstrap();

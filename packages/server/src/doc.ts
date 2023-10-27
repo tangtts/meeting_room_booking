@@ -8,9 +8,8 @@ export const generateDocument = (app: INestApplication) => {
     .setDescription(packageConfig.description)
     .setVersion(packageConfig.version)
     .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, // 允许token 验证
-      'JWT',
-      )
+      { type: "http", description: "基于jwt 的验证" } // 允许token 验证
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
