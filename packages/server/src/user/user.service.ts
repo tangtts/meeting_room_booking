@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { RegisterUserDto } from "./dto/register-user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Like, Repository } from "typeorm";
+import { Between, Like, Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import { RedisService } from "src/redis/redis.service";
 import { md5 } from "src/utils";
@@ -38,7 +38,10 @@ export class UserService {
     private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
-  ) {}
+  ) {
+  }
+
+
 
   async findUserDetailById(userId: number) {
     const user = await this.userRepository.findOne({
@@ -49,30 +52,47 @@ export class UserService {
     return user;
   }
 
-  async update(userId: number, updateUserDto: UpdateUserDto) {
+  async update( updateUserDto: UpdateUserDto) {
     // const captcha = await this.redisService.get(
     //   `update_user_captcha_${updateUserDto.email}`
     // );
 
-    const captcha = await this.redisService.get(updateUserDto.captcha);
+    // const captcha = await this.redisService.get(updateUserDto.captcha);
 
-    if (!captcha) {
-      throw new HttpException("验证码已失效", HttpStatus.BAD_REQUEST);
-    }
+    // if (!captcha) {
+    //   throw new HttpException("验证码已失效", HttpStatus.BAD_REQUEST);
+    // }
 
-    if (updateUserDto.captcha !== captcha) {
-      throw new HttpException("验证码不正确", HttpStatus.BAD_REQUEST);
-    }
+    // if (updateUserDto.captcha !== captcha) {
+    //   throw new HttpException("验证码不正确", HttpStatus.BAD_REQUEST);
+    // }
 
     const foundUser = await this.userRepository.findOneBy({
-      id: userId,
+      id: updateUserDto.id,
     });
 
     if (updateUserDto.nickName) {
       foundUser.nickName = updateUserDto.nickName;
     }
+
+    if (updateUserDto.isFrozen) {
+      foundUser.isFrozen = updateUserDto.isFrozen;
+    }
+
+    if (updateUserDto.username) {
+      foundUser.username = updateUserDto.username;
+    }
+
     if (updateUserDto.headPic) {
       foundUser.headPic = updateUserDto.headPic;
+    }
+
+    if (updateUserDto.phoneNumber) {
+      foundUser.phoneNumber = updateUserDto.phoneNumber;
+    }
+
+    if (updateUserDto.email) {
+      foundUser.email = updateUserDto.email;
     }
 
     try {
@@ -310,12 +330,12 @@ export class UserService {
     return vo;
   }
 
-  async freezeUserById(id: number) {
+  async toggleFreezeUserById(id: number) {
     const user = await this.userRepository.findOneBy({
       id,
     });
 
-    user.isFrozen = true;
+    user.isFrozen = !user.isFrozen;
 
     await this.userRepository.save(user);
   }
@@ -324,12 +344,17 @@ export class UserService {
     nickName,
     pageNo,
     pageSize,
+    startTime,
+    endTime
   }: {
     username: string;
     nickName: string;
     pageNo: number;
     pageSize: number;
+    startTime: string;
+    endTime: string;
   }) {
+    console.log("🚀 ~ file: user.service.ts:337 ~ UserService ~ startTime:", startTime);
     const skipCount = (pageNo - 1) * pageSize;
 
     const condition: Record<string, any> = {};
@@ -340,6 +365,17 @@ export class UserService {
     if (nickName) {
       condition.nickName = Like(`%${nickName}%`);
     }
+
+    let startDate  = new Date('1900/1/1')
+    if(startTime){
+      startDate = new Date(startTime);
+    }
+
+    let endDate  = new Date('2099/1/1')
+    if(endTime){
+      endDate = new Date(endTime);
+    }
+    condition.createTime = Between(startDate, endDate);
 
     const [users, totalCount] = await this.userRepository.findAndCount({
       select: [

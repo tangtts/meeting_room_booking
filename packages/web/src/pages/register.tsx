@@ -14,7 +14,7 @@ export default function Register() {
     register(values).then((res: any) => {
       if (res.code == 201) {
         messageApi.success('注册成功!');
-        navigate('/')
+        navigate('/login')
       } else {
         messageApi.error(res.data);
       }
@@ -49,7 +49,7 @@ const generateCaptcha = ()=>{
     <>
     <Flex justify='center' align='center' vertical>
       {contextHolder}
-      <h1>abc</h1>
+      <h1>注册</h1>
       <Form
         name="basic"
         labelCol={{ span: 6 }}
@@ -58,10 +58,10 @@ const generateCaptcha = ()=>{
         initialValues={{
           username: 'lisi',
           password: '333333',
+          repeatPassword:"333333",
           nickName:"lisi",
-          email:"123@qq.com",
+          email:"2939117014@qq.com",
           phoneNumber: '12345678901',
-
         }}
         onFinish={onFinish}
         autoComplete="off"

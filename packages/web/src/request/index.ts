@@ -1,12 +1,12 @@
+import { message } from "antd";
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:4396/";
 
-axios.defaults.headers.Authorization =
-  "Bearer " + localStorage.getItem("accessToken");
 
 axios.interceptors.request.use(
   config => {
+    config.headers.Authorization =  "Bearer " + localStorage.getItem("accessToken")
     return config;
   },
   error => {

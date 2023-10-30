@@ -1,10 +1,10 @@
-import { Controller, Get, SetMetadata } from "@nestjs/common";
+import { Controller, Get, Query, SetMetadata } from "@nestjs/common";
 import { AppService } from "./app.service";
-import {RequireLogin} from "./custom.decorator"
+import { RequireLogin } from "./custom.decorator";
 @Controller()
 export default class AppController {
   constructor(private appService: AppService) {}
-
+ 
   @Get("aaa")
   // @SetMetadata('require-login', true)
   @RequireLogin()

@@ -15,10 +15,10 @@ export default function Login() {
         localStorage.setItem('refreshToken', res.data.refreshToken)
         localStorage.setItem('user_info', JSON.stringify(res.data.userInfo));
         messageApi.success('登录成功!');
+        navigate('/user_manage')
       } else {
         messageApi.error(res.data);
       }
-      console.log(res)
     })
   };
 
@@ -32,14 +32,15 @@ export default function Login() {
     })
   }, [])
 
-  const createAccount = () => {
-    // navigate
-  }
+ 
   const forgotPassword = () => { }
 
   return (
     <>
       {contextHolder}
+      <Row  style={{height:'100vh',textAlign:'center'}}>
+      <Col span={24}><h1>登录</h1></Col>  
+      <Col span={24}  offset={6}>
       <Form
         name="basic"
         labelCol={{ span: 4 }}
@@ -74,12 +75,12 @@ export default function Login() {
         >
           <Flex justify='space-around'>
             <Button type='link'>
-              <Link to="register">
+              <Link to="/register">
                 创建账号
               </Link>
             </Button>
             <Button type='link'>
-                忘记密码
+              忘记密码
               {/* <Link to="forgotpassword">
               </Link> */}
             </Button>
@@ -114,6 +115,8 @@ export default function Login() {
           </Button>
         </Form.Item>
       </Form>
+      </Col>
+      </Row>
     </>
   )
 }

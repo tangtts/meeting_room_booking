@@ -5,18 +5,43 @@ import Login from './pages/login.tsx';
 import Register from './pages/register.tsx';
 import UpdatePassword from './pages/updatePassword.tsx';
 import UserManage from './pages/user_manage.tsx';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-const routes = [
+import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import Menu from './pages/menu.tsx';
+import { ModifyMenu } from './pages/ModifyMenu/ModifyMenu.tsx';
+import { InfoModify } from './pages/ModifyMenu/InfoModify.tsx';
+import { PasswordModify } from './pages/ModifyMenu/PasswordModify.tsx';
+const routes: RouteObject[] = [
     {
 
         path: "/",
         element: <App />,
         children: [
             {
-                path: "user_manage",
-                element: <UserManage />,
+                path: "",
+                element: <Menu></Menu>,
+                children: [
+                    {
+                        path: 'user_manage',
+                        element: <UserManage />
+                    }
+                ]
             }
         ]
+    },
+    {
+        path: "/user",
+        element: <ModifyMenu></ModifyMenu>,
+        children: [
+            {
+                path: 'info_modify',
+                element: <InfoModify />
+            },
+            {
+                path: 'password_modify',
+                element: <PasswordModify />
+            },
+        ]
+
     },
     {
         path: "/login",

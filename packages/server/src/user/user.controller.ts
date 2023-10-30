@@ -86,13 +86,14 @@ export class UserController {
     return await this.userService.updatePassword(userId, passwordDto);
   }
 
-  @Get("freeze")
-  async freeze(@Query("id") userId: number) {
-    await this.userService.freezeUserById(userId);
+  @Get("toggleFreeze")
+  async toggleFreeze(@Query("id") userId: number) {
+    await this.userService.toggleFreezeUserById(userId);
     return "success";
   }
 
   @Get("list")
+  @RequireLogin()
   async list(
     @Query(
       "pageNo",
@@ -115,24 +116,38 @@ export class UserController {
     )
     pageSize: number,
     @Query("username") username: string,
-    @Query("nickName") nickName: string
+    @Query("nickName") nickName: string,
+    @Query("startTime") startTime: string,
+    @Query("endTime") endTime: string
   ) {
     return await this.userService.findUsersByPage({
       username,
       nickName,
+      startTime,
+      endTime,
       pageNo,
       pageSize,
     });
   }
 
+  // @Post(["update", "admin/update"])
+  // @RequireLogin()
+  // async update(
+  //   @UserInfo("userId") userId: number,
+  //   @Body() updateUserDto: UpdateUserDto
+  // ) {
+  //   return await this.userService.update(userId, updateUserDto);
+  // }
+
   @Post(["update", "admin/update"])
   @RequireLogin()
   async update(
-    @UserInfo("userId") userId: number,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    return await this.userService.update(userId, updateUserDto);
+    return await this.userService.update(updateUserDto);
   }
+
+
 
   @ApiBearerAuth()
   @Get("info")

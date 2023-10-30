@@ -25,6 +25,8 @@ export interface RegisterParams  {
 export interface UserListQuery extends CommonTable {
   username?:string
   nickName?:string
+  startTime?:string
+  endTime?:string
 }
 
 export interface UserListItem {
@@ -62,3 +64,12 @@ export const fetchUserList = (userList:UserListQuery)=>{
 export const fetchUserUpdate = (updateUser:UpdateUser)=>{
   return axios.post("/user/update",updateUser)
 }
+
+export const fetchUserToggleFreeze = (id:number)=>{
+  return axios.get("/user/toggleFreeze",{
+    params:{
+      id
+    }
+  })
+}
+
