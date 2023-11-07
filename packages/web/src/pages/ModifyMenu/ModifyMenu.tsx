@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Menu as AntdMenu, Flex, MenuProps } from 'antd';
+import { Menu as AntdMenu, Col, Flex, MenuProps, Row } from 'antd';
 
 const items: MenuProps['items'] = [
     {
@@ -25,16 +25,16 @@ export function ModifyMenu() {
         }
     }
 
-    return <Flex id="menu-container">
-        <div className="menu-area">
+    return <Row id="menu-container">
+        <Col span={4} >
             <AntdMenu
                 defaultSelectedKeys={location.pathname === '/user/info_modify' ? ['1'] : ['2']}
                 items={items}
                 onClick={handleMenuItemClick}
             />
-        </div>
-        <div className="content-area">
+        </Col>
+        <Col span={20}>
             <Outlet></Outlet>
-        </div>
-    </Flex>
+        </Col>
+    </Row>
 }

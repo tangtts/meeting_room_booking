@@ -1,5 +1,6 @@
 
 import axios  from ".";
+import { CommonTable } from "./commonType";
 
 export interface LoginParams  {
   username: string
@@ -14,11 +15,6 @@ export interface RegisterParams  {
   email?:string
   captcha:string
   phoneNumber?:string
-}
-
- interface CommonTable  {
-  pageNo:number,
-  pageSize:number,
 }
 
 
@@ -39,12 +35,21 @@ export interface UserListItem {
   updateTime:string
 }
 
-export interface UpdateUser {
-  id:string,
-  username?:string,
-  nickName?:string,
-  email?:string,
-  phoneNumber?:string,
+export interface UserInfo {
+  headPic:string
+  username:string,
+  nickName:string,
+  email:string,
+  phoneNumber:string,
+}
+
+
+export interface UpdateSelfUser extends Partial<UserInfo>{
+ captcha:string
+}
+
+export interface UpdateUser extends Partial<UserInfo>{
+  id:number,
 }
 
 export const login = (login:LoginParams)=>{
@@ -72,4 +77,14 @@ export const fetchUserToggleFreeze = (id:number)=>{
     }
   })
 }
+
+export const fetchUserInfo = ()=>{
+  return axios.get("/user/info")
+}
+
+export const fetchUpdateSelf = (updateSelfUser:UpdateSelfUser)=>{
+  return axios.post("/user/updateSelf",updateSelfUser)
+}
+
+
 

@@ -6,17 +6,8 @@ import { FilterValue, SorterResult, TablePaginationConfig } from "antd/es/table/
 import { SearchOutlined, RedoOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from "antd/es/upload";
 import { Image } from "antd"
-const beforeUpload = (file: RcFile) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJpgOrPng && isLt2M;
-};
+import UploadAvatar from "../components/uploadAvatar";
+
 
 
 export default function user_manage() {
@@ -129,7 +120,7 @@ export default function user_manage() {
   ];
 
   const [open, setOpen] = useState(false);
-
+  const [imageUrl,setImageUrl] = useState<string>('')
   let updateUserId = useRef(0);
   const openDialog = (record: DataType) => {
     updateUserId.current = record.id;
@@ -167,6 +158,7 @@ export default function user_manage() {
   };
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+
   const handleOk = () => {
     setConfirmLoading(true);
     let r = dialogForm.getFieldsValue();
@@ -175,7 +167,6 @@ export default function user_manage() {
       ...r,
       headPic:imageUrl
     }).then((res: any) => {
-      console.log(res)
       if (res.code == 201) {
         handleTableChange({
           current: query.pageNo,
@@ -192,31 +183,10 @@ export default function user_manage() {
   const [form] = Form.useForm();
   const [dialogForm] = Form.useForm();
 
-const [imageUrl,setImageUrl] = useState<string>()
-
-const [loading, setLoading] = useState(false);
 
 
-const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-  if (info.file.status === 'uploading') {
-    setLoading(true);
-    return;
-  }
-  if (info.file.status === 'done') {
-    if(info.file.response.code == 201){
-      let path =  info.file.response.data.url
-      setImageUrl(path)
-    }
-    setLoading(false);
-  }
-};
 
-const uploadButton = (
-  <div>
-    {loading ? <LoadingOutlined /> : <PlusOutlined />}
-    <div style={{ marginTop: 8 }}>Upload</div>
-  </div>
-);
+
 
   return <>
     {contextHolder}
@@ -291,16 +261,7 @@ const uploadButton = (
         valuePropName="file"
         label="头像" 
        >
-          <Upload
-            name="file"
-            listType="picture-card"
-            showUploadList={false}
-            action="http://localhost:4396/upload/upload"
-            beforeUpload={beforeUpload}
-            onChange={handleChange}
-          >
-            {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-          </Upload>
+        <UploadAvatar image={imageUrl} onSuccess={setImageUrl}></UploadAvatar>
         </Form.Item>
 
         <Form.Item label="用户名" name="username">

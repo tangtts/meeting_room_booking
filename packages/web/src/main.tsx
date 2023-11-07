@@ -10,6 +10,9 @@ import Menu from './pages/menu.tsx';
 import { ModifyMenu } from './pages/ModifyMenu/ModifyMenu.tsx';
 import { InfoModify } from './pages/ModifyMenu/InfoModify.tsx';
 import { PasswordModify } from './pages/ModifyMenu/PasswordModify.tsx';
+import { MeetingRoomManage } from './pages/mettingRoom/MeetingRoomManage.tsx';
+import { BookingManage } from './pages/mettingRoom/BookingManage.tsx';
+import { Statistics } from './pages/mettingRoom/Statistics.tsx';
 const routes: RouteObject[] = [
     {
 
@@ -20,6 +23,22 @@ const routes: RouteObject[] = [
                 path: "",
                 element: <Menu></Menu>,
                 children: [
+                    {
+                        path: "",
+                        element: <MeetingRoomManage />
+                    },
+                    {
+                        path: "meeting_room_manage",
+                        element: <MeetingRoomManage />
+                    },
+                    {
+                        path: "booking_manage",
+                        element: <BookingManage />
+                    },
+                    {
+                        path: "statistics",
+                        element: <Statistics />
+                    },
                     {
                         path: 'user_manage',
                         element: <UserManage />

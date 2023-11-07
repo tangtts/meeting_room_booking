@@ -20,6 +20,7 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UpdateUserPasswordDto } from "./dto/update-user-password";
 import { UpdateUserDto } from "./dto/udpate-user.dto";
+import { UpdateSelfUserDto } from "./dto/updateSelf.dto";
 
 @Injectable()
 export class UserService {
@@ -50,6 +51,57 @@ export class UserService {
       },
     });
     return user;
+  }
+
+  async  updateSelf(userId:number, updateUserDto: 
+    UpdateSelfUserDto 
+    ){
+
+    const foundUser = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      }
+    })
+
+    if(!foundUser){
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
+
+    if(!updateUserDto.captcha){
+      throw new HttpException('验证码不存在', HttpStatus.BAD_REQUEST);
+    }
+
+     if (updateUserDto.captcha !== await this.redisService.get(`captcha_${updateUserDto.email}`)) {
+      throw new HttpException("验证码不正确", HttpStatus.BAD_REQUEST);
+    }
+   
+    if (updateUserDto.nickName) {
+      foundUser.nickName = updateUserDto.nickName;
+    }
+
+    if (updateUserDto.username) {
+      foundUser.username = updateUserDto.username;
+    }
+
+    if (updateUserDto.headPic) {
+      foundUser.headPic = updateUserDto.headPic;
+    }
+
+    if (updateUserDto.phoneNumber) {
+      foundUser.phoneNumber = updateUserDto.phoneNumber;
+    }
+
+    if (updateUserDto.email) {
+      foundUser.email = updateUserDto.email;
+    }
+    
+    try {
+      await this.userRepository.save(foundUser);
+      return "用户信息修改成功";
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return "用户信息修改成功";
+    }
   }
 
   async update( updateUserDto: UpdateUserDto) {
@@ -354,7 +406,6 @@ export class UserService {
     startTime: string;
     endTime: string;
   }) {
-    console.log("🚀 ~ file: user.service.ts:337 ~ UserService ~ startTime:", startTime);
     const skipCount = (pageNo - 1) * pageSize;
 
     const condition: Record<string, any> = {};

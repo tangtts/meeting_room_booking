@@ -29,6 +29,7 @@ import { UserDetailVo } from "./vo/user-info.vo";
 import { UpdateUserDto } from "./dto/udpate-user.dto";
 import * as svgCaptcha from "svg-captcha";
 import { RedisService } from "src/redis/redis.service";
+import { UpdateSelfUserDto } from "./dto/updateSelf.dto";
 @ApiTags("user")
 @Controller("user")
 export class UserController {
@@ -141,13 +142,18 @@ export class UserController {
 
   @Post(["update", "admin/update"])
   @RequireLogin()
-  async update(
-    @Body() updateUserDto: UpdateUserDto
-  ) {
+  async update(@Body() updateUserDto: UpdateUserDto) {
     return await this.userService.update(updateUserDto);
   }
 
-
+  @Post("updateSelf")
+  @RequireLogin()
+  async updateSelf(
+    @UserInfo("userId") userId: number,
+    @Body() updateUserDto: UpdateSelfUserDto
+  ) {
+    return await this.userService.updateSelf(userId, updateUserDto);
+  }
 
   @ApiBearerAuth()
   @Get("info")
