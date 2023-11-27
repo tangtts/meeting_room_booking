@@ -8,6 +8,15 @@ export interface meetingListQuery extends CommonTable {
   equipment?:string
 }
 
+export interface MeetingRoomSearchResult {
+  id:string | number
+  capacity:number
+  name:string
+  location:string
+  equipment:string
+  isBooked:boolean
+}
+
 export interface meetingUpdate  {
   id:string | number
   capacity:number | string
@@ -16,6 +25,8 @@ export interface meetingUpdate  {
   equipment?:string
   isBooked:boolean
 }
+
+
 
 
 export const fetchMeetingList = (meetingListQuery:meetingListQuery)=>{

@@ -5,7 +5,7 @@ import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { Between, EntityManager, Like, Repository } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { MeetingRoom } from "src/meeting-room/entities/meeting-room.entity";
-import { Booking } from "./entities/booking.entity";
+import { Booking, Status } from "./entities/booking.entity";
 
 @Injectable()
 export class BookingService {
@@ -18,6 +18,7 @@ export class BookingService {
   async find({
     pageNo,
     pageSize,
+    status,
     username,
     meetingRoomName,
     meetingRoomPosition,
@@ -31,6 +32,7 @@ export class BookingService {
     meetingRoomPosition: string;
     bookingTimeRangeStart: number;
     bookingTimeRangeEnd: number;
+    status:Status
   }) {
     const skipCount = (pageNo - 1) * pageSize;
 
@@ -45,6 +47,12 @@ export class BookingService {
     if (meetingRoomName) {
       condition.room = {
         name: Like(`%${meetingRoomName}%`),
+      };
+    }
+
+    if (status) {
+      condition.status = {
+        status: Like(`%${status}%`),
       };
     }
 
@@ -149,8 +157,8 @@ export class BookingService {
     return `This action returns a #${id} booking`;
   }
 
-  update(id: number, updateBookingDto: UpdateBookingDto) {
-    return `This action updates a #${id} booking`;
+  update({id,state} : {id: number, state: `${Status}`}) {
+    this.bookRepository.update(id, { status: state })
   }
 
   remove(id: number) {
